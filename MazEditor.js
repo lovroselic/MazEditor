@@ -27,7 +27,7 @@ var INI = {
   SPACE_Y: 2048
 };
 var PRG = {
-  VERSION: "0.01.02",
+  VERSION: "0.01.03",
   NAME: "MazEditor",
   YEAR: "2022",
   CSS: "color: #239AFF;",
@@ -92,6 +92,9 @@ var GAME = {
       case "wall":
         GA.toWall(grid);
         break;
+        case "door":
+          GA.toDoor(grid);
+          break;
     }
 
     GAME.render();
