@@ -21,15 +21,15 @@
                     Size:
                 </legend>
                 Grid dimensions:
-                <input name="gridsize" id="horizontalGrid" type="text" size="2" maxlength="2" value="32">
+                <input name="gridsize" id="horizontalGrid" type="text" size="2" maxlength="2" value="16">
                 <span> X </span>
-                <input name="gridsize" id="verticalGrid" type="text" size="2" maxlength="2" value="32">
+                <input name="gridsize" id="verticalGrid" type="text" size="2" maxlength="2" value="16">
                 <br />
                 Grid size (px):
                 <input name="gridsize" id="gridsize" type="text" size="2" maxlength="2" value="48">
                 <br /><br />
-                <br /> WIDTH (px) = <span id="ENGINEgameWIDTH"></span> / 2048<br /> HEIGHT (px) = <span
-                    id="ENGINEgameHEIGHT"></span> / 2048<br />
+                <br /> WIDTH (px) = <span id="ENGINEgameWIDTH"></span> / <span id="spacex"></span><br /> HEIGHT (px) =
+                <span id="ENGINEgameHEIGHT"></span> / <span id="spacey"></span><br />
                 <br />
             </fieldset>
             <fieldset>
@@ -37,57 +37,22 @@
                     Renderer:
                 </legend>
                 <input type="radio" name="renderer" value="line">Line <br />
-                <input type="radio" name="renderer" value="block" >Block<br />
+                <input type="radio" name="renderer" value="block">Block<br />
                 <input type="radio" name="renderer" value="texture" checked="checked">Texture <br />
                 <input type="checkbox" id="corr" value="corr" name="corr" checked="checked">Draw corridor gridline<br />
                 <input type="checkbox" id="grid" value="grid" name="grid" checked="checked">Main grid<br />
             </fieldset>
         </div>
-        <!--<div class="setup_container section">
+        <div class="setup_container section" id="paint">
             <fieldset>
                 <legend>
-                    Random Maze:
+                    On click, paint:
                 </legend>
+                <input type="radio" name="painter" value="wall">Wall <br />
+                <input type="radio" name="painter" value="space" checked="checked">Space <br />
 
-                <input type="checkbox" id="perfect" value="perfect" name="perfect">Perfect maze - one solution<br />
-                <input type="checkbox" id="some" value="some" name="some" checked="checked">Connect SOME dead ends, but
-                TRY to
-                leave
-                <input name="leave" id="leave" type="text" size="1" maxlength="2" value="8">
-                <br />
-                <input type="checkbox" id="polish" value="polish" name="polish">Connect All dead ends<br />
-                <input type="checkbox" id="glanz" value="glanz" name="glanz" checked="checked">Polish dead ends (size
-                1)<br />
-                <input type="checkbox" id="conn" value="conn" name="conn">Add connections to reach density<br />
-                Target density: <input name="density" id="density" type="text" size="5" value="0.600"
-                    disabled="disabled"><br />
-                <input type="checkbox" id="bias" value="bias" name="bias" checked="checked">Use bias (longer
-                forks)<br />
-                BIAS: <input name="bias_size" id="bias_size" type="text" size="2" maxlength="1" value="2"><br />
-                <input type="checkbox" id="open" value="open" name="open" checked="checked">External exits<br />
-                -----------------------------------<br />
-                Dead ends left: <span id="de"></span><br />
-                Density (of space): <span id="real_density"></span><br />
             </fieldset>
         </div>
-        <div class="setup_container section">
-            <fieldset>
-                <legend>
-                    Random Dungeon:
-                </legend>
-                MIN_ROOM: <input name="MIN_ROOM" id="MIN_ROOM" type="text" size="1" maxlength="1" value="3"><br>
-                MAX_ROOM: <input name="MAX_ROOM" id="MAX_ROOM" type="text" size="2" maxlength="2" value="6"><br>
-                MIN_PAD: <input name="MIN_PAD" id="MIN_PAD" type="text" size="1" maxlength="1" value="2"><br>
-                ITERATIONS: <input name="ITERATIONS" id="ITERATIONS" type="text" size="1" maxlength="1" value="4"><br>
-                MIN_AREA:<span id="MIN_AREA"></span> MAX_AREA:<span id="MAX_AREA"></span><br><br>
-                <input type="checkbox" id="limit" value="limit" name="limit">Limit number of rooms<br />
-                Max rooms: <input name="limit_size" id="limit_size" type="text" size="2" maxlength="2" value="2"
-                    disabled="disabled"><br />
-                <input type="checkbox" id="singledoor" value="singledoor" name="singledoor">Single door to room<br />
-                <input type="checkbox" id="centered" value="centered" name="centered">Single centered room<br />
-            </fieldset>
-        </div>
-    -->
 
         <p class="cb" id="buttons"></p>
         <p class="version cb" id="version"></p>

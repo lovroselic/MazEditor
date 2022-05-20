@@ -27,7 +27,7 @@ var INI = {
   SPACE_Y: 2048
 };
 var PRG = {
-  VERSION: "0.01.01",
+  VERSION: "0.01.02",
   NAME: "MazEditor",
   YEAR: "2022",
   CSS: "color: #239AFF;",
@@ -79,7 +79,22 @@ var GAME = {
   },
   mouseClick(event) {
     ENGINE.readMouse(event);
-    console.log(ENGINE.mouseX, ENGINE.mouseY);
+    let x = Math.floor(ENGINE.mouseX / ENGINE.gameWIDTH * MAP.width);
+    let y = Math.floor(ENGINE.mouseY / ENGINE.gameHEIGHT * MAP.height);
+    let grid = new Grid(x, y);
+    var radio = $("#paint input[name=painter]:checked").val();
+    let GA = MAP.map.GA;
+
+    switch (radio) {
+      case "space":
+        GA.carveDot(grid);
+        break;
+      case "wall":
+        GA.toWall(grid);
+        break;
+    }
+
+    GAME.render();
   },
   pacGrid() {
     let corr = $("input[name='corr']")[0].checked;
@@ -108,8 +123,8 @@ var GAME = {
     GAME.canvas = ENGINE.TEXTUREGRID.floorLayer.canvas;
   },
   resize() {
-    MAP.level.width = $("#horizontalGrid").val();
-    MAP.level.height = $("#verticalGrid").val();
+    MAP.width = $("#horizontalGrid").val();
+    MAP.height = $("#verticalGrid").val();
   },
   render() {
     var radio = $("#selector input[name=renderer]:checked").val();
@@ -134,6 +149,7 @@ var GAME = {
     MAP.width = $("#horizontalGrid").val();
     MAP.height = $("#verticalGrid").val();
     MAP.map = FREE_MAP.create(MAP.width, MAP.height);
+    console.log(MAP.map);
     GAME.render();
   },
   updateWH() {
@@ -166,7 +182,9 @@ var GAME = {
     ENGINE.gameWIDTH = $("#horizontalGrid").val() * ENGINE.INI.GRIDPIX;
     $("#ENGINEgameWIDTH").html(ENGINE.gameWIDTH);
     $("#ENGINEgameHEIGHT").html(ENGINE.gameHEIGHT);
-    if (GAME.started) GAME.resize();
+    $("#spacex").html(INI.SPACE_X);
+    $("#spacey").html(INI.SPACE_Y);
+    GAME.resize();
   },
   setup() {
     console.log("GAME SETUP started");
