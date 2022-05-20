@@ -7,7 +7,7 @@
 ///////////////////////Dungeon.js///////////////
 //                                            //
 //        Procedureal maze and dungeon        //
-//             generation: 3.04               //
+//             generation: 3.05.DEV               //
 //                                            //
 //    dependencies: Prototype LS, ENGINE      //
 ////////////////////////////////////////////////
@@ -1611,6 +1611,12 @@ class RatArena extends MasterDungeon {
         console.log(`%cRat-Arena construction ${performance.now() - t0} ms.`, DUNGEON.CSS);
     }
 }
+class FreeMap extends MasterDungeon{
+    constructor(sizeX, sizeY){
+        super(sizeX, sizeY);
+        this.type = "FREE-MAP";
+    } 
+}
 var MAZE = {
     opened: false,
     openDirs: null,
@@ -1679,8 +1685,14 @@ var ARENA = {
         return arena;
     }
 };
+var FREE_MAP = {
+    create(sizeX, sizeY){
+        var map = new FreeMap(sizeX, sizeY);
+        return map;
+    }
+};
 var DUNGEON = {
-    VERSION: "3.04",
+    VERSION: "3.05",
     CSS: "color: #f4ee42",
     REFUSE_CONNECTION_TO_ROOM: true,
     LIMIT_ROOMS: false,
