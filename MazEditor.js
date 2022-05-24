@@ -27,7 +27,7 @@ var INI = {
   SPACE_Y: 2048
 };
 var PRG = {
-  VERSION: "0.01.03",
+  VERSION: "0.01.04",
   NAME: "MazEditor",
   YEAR: "2022",
   CSS: "color: #239AFF;",
@@ -56,6 +56,11 @@ var PRG = {
     $("#grid").click(GAME.render);
 
     $("#buttons").on("click", "#new", GAME.init);
+
+    $("#engine_version").html(ENGINE.VERSION);
+    $("#grid_version").html(GRID.VERSION);
+    $("#maze_version").html(DUNGEON.VERSION);
+    $("#lib_version").html(LIB.VERSION);
   },
   start() {
     console.log(PRG.NAME + " started.");
@@ -76,6 +81,7 @@ var GAME = {
     ENGINE.topCanvas = ENGINE.getCanvasName("ROOM");
     $(ENGINE.topCanvas).on("click", { layer: ENGINE.topCanvas }, GAME.mouseClick);
     GAME.init();
+    GAME.started = true;
   },
   mouseClick(event) {
     ENGINE.readMouse(event);
@@ -86,15 +92,22 @@ var GAME = {
     let GA = MAP.map.GA;
 
     switch (radio) {
+      case 'flip':
+        if (GA.isWall(grid)) {
+          GA.carveDot(grid);
+        } else {
+          GA.toWall(grid);
+        }
+        break;
       case "space":
         GA.carveDot(grid);
         break;
       case "wall":
         GA.toWall(grid);
         break;
-        case "door":
-          GA.toDoor(grid);
-          break;
+      case "door":
+        GA.toDoor(grid);
+        break;
     }
 
     GAME.render();
@@ -107,7 +120,7 @@ var GAME = {
     let lw = Math.round(ENGINE.INI.GRIDPIX / 12);
     ENGINE.PACGRID.configure(lw, "pacgrid", "#FFF", "#000", "#666");
     ENGINE.PACGRID.draw(pac, corr);
-    GAME.canvas = ENGINE.PACGRID.layer.canvas;
+    //GAME.canvas = ENGINE.PACGRID.layer.canvas;
   },
   blockGrid() {
     let corr = $("input[name='corr']")[0].checked;
@@ -115,7 +128,7 @@ var GAME = {
     $(ENGINE.gameWindowId).width(ENGINE.gameWIDTH + 4);
     ENGINE.BLOCKGRID.configure("pacgrid", "#FFF", "#000");
     ENGINE.BLOCKGRID.draw(MAP.map, corr);
-    GAME.canvas = ENGINE.BLOCKGRID.layer.canvas;
+    //GAME.canvas = ENGINE.BLOCKGRID.layer.canvas;
   },
   textureGrid() {
     let corr = $("input[name='corr']")[0].checked;
@@ -123,7 +136,15 @@ var GAME = {
     $(ENGINE.gameWindowId).width(ENGINE.gameWIDTH + 4);
     ENGINE.TEXTUREGRID.configure("pacgrid", "wall", 'RockFloor', 'BrickWall4');
     ENGINE.TEXTUREGRID.draw(MAP.map, corr);
-    GAME.canvas = ENGINE.TEXTUREGRID.floorLayer.canvas;
+    //GAME.canvas = ENGINE.TEXTUREGRID.floorLayer.canvas;
+  },
+  tileGrid() {
+    let corr = $("input[name='corr']")[0].checked;
+    ENGINE.resizeBOX("ROOM");
+    $(ENGINE.gameWindowId).width(ENGINE.gameWIDTH + 4);
+    ENGINE.TEXTUREGRID.configure("pacgrid", "wall", 'BackgroundTile', 'WallTile');
+    ENGINE.TEXTUREGRID.drawTiles(MAP.map, corr);
+    //GAME.canvas = ENGINE.TEXTUREGRID.floorLayer.canvas;
   },
   resize() {
     MAP.width = $("#horizontalGrid").val();
@@ -143,17 +164,26 @@ var GAME = {
       case "texture":
         GAME.textureGrid();
         break;
+
+        case "tile":
+          GAME.tileGrid();
+          break;
     }
 
     if ($("input[name='grid']")[0].checked) GRID.grid();
   },
   init() {
-    console.log("new canvas");
-    MAP.width = $("#horizontalGrid").val();
-    MAP.height = $("#verticalGrid").val();
-    MAP.map = FREE_MAP.create(MAP.width, MAP.height);
-    console.log(MAP.map);
-    GAME.render();
+    let OK = true;
+    if (GAME.started) {
+      OK = confirm("Sure?");
+    }
+    if (OK) {
+      MAP.width = $("#horizontalGrid").val();
+      MAP.height = $("#verticalGrid").val();
+      MAP.map = FREE_MAP.create(MAP.width, MAP.height);
+      console.log(MAP.map);
+      GAME.render();
+    }
   },
   updateWH() {
     if (isNaN(parseInt($("#verticalGrid").val(), 10))) $("#verticalGrid").val(32);

@@ -6,7 +6,7 @@
 
 //////////////////engine.js/////////////////////////
 //                                                //
-//      ENGINE version 3.10        by LS          //
+//      ENGINE version 3.11        by LS          //
 //                                                //
 ////////////////////////////////////////////////////
 
@@ -30,7 +30,7 @@ var DownRight = new Vector(1, 1);
 var DownLeft = new Vector(-1, 1);
 
 var ENGINE = {
-  VERSION: "3.10",
+  VERSION: "3.11.DEV",
   CSS: "color: #0FA",
   INI: {
     ANIMATION_INTERVAL: 16,
@@ -1603,12 +1603,14 @@ var ENGINE = {
       ENGINE.TEXTUREGRID.wallTexture = TEXTURE[wallTexture];
       ENGINE.TEXTUREGRID.wallTextureString = wallTexture;
     },
+    corr(CTX, point) {
+      CTX.setLineDash([1, 1]);
+      CTX.strokeStyle = "#EEE";
+      CTX.strokeRect(point.x, point.y, ENGINE.INI.GRIDPIX, ENGINE.INI.GRIDPIX);
+    },
     draw(maze, corr = false) {
       let t0 = performance.now();
-      ENGINE.fill(
-        ENGINE.TEXTUREGRID.floorLayer,
-        ENGINE.TEXTUREGRID.floorTexture
-      );
+      ENGINE.fill(ENGINE.TEXTUREGRID.floorLayer, ENGINE.TEXTUREGRID.floorTexture);
       ENGINE.fill(ENGINE.TEXTUREGRID.wallLayer, ENGINE.TEXTUREGRID.wallTexture);
 
       for (let x = 0; x < maze.width; x++) {
@@ -1617,23 +1619,30 @@ var ENGINE = {
           if (maze.GA.isEmpty(grid)) {
             let point = GRID.gridToCoord(grid);
             ENGINE.cutGrid(ENGINE.TEXTUREGRID.wallLayer, point);
-            if (corr) {
-              let CTX = ENGINE.TEXTUREGRID.wallLayer;
-              CTX.setLineDash([1, 1]);
-              CTX.strokeStyle = "#EEE";
-              CTX.strokeRect(
-                point.x,
-                point.y,
-                ENGINE.INI.GRIDPIX,
-                ENGINE.INI.GRIDPIX
-              );
-            }
+            if (corr) ENGINE.TEXTUREGRID.corr(ENGINE.TEXTUREGRID.wallLayer, point);
           }
         }
       }
       ENGINE.flattenLayers(ENGINE.TEXTUREGRID.wallLayerString, ENGINE.TEXTUREGRID.floorLayerString);
       if (ENGINE.verbose) {
         console.log(`%cTEXTUREGRID draw ${performance.now() - t0} ms`, ENGINE.CSS);
+      }
+    },
+    drawTiles(maze, corr = false) {
+      let t0 = performance.now();
+      for (let x = 0; x < maze.width; x++) {
+        for (let y = 0; y < maze.height; y++) {
+          let grid = new Grid(x, y);
+          if (maze.GA.isWall(grid)) {
+            ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID.wallTextureString].linear.chooseRandom());
+          } else {
+            ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID.floorTextureString].linear.chooseRandom());
+          }
+          if (corr) ENGINE.TEXTUREGRID.corr(ENGINE.TEXTUREGRID.wallLayer, GRID.gridToCoord(grid));
+        }
+      }
+      if (ENGINE.verbose) {
+        console.log(`%cTEXTUREGRID tileDraw ${performance.now() - t0} ms`, ENGINE.CSS);
       }
     }
   },
@@ -1974,6 +1983,7 @@ var LAYER = {
 };
 var SPRITE = {};
 var AUDIO = {};
+var TILE = {};
 var ASSET = {
   convertToGrayScale(original, target, howmany = 1) {
     ASSET[target] = {};

@@ -6,7 +6,7 @@
 "use strict";
 console.log("%cAssets for MazeEditor ready.", "color: orange");
 
-var LoadTextures = ["BrickWall4.jpg","RockFloor.jpg"];
+var LoadTextures = ["BrickWall4.jpg", "RockFloor.jpg"];
 var LoadSprites = [];
 var LoadSequences = [];
 var LoadSheetSequences = [];
@@ -18,3 +18,7 @@ var LoadExtWasm = [];
 var LoadAudio = [];
 var LoadFonts = [];
 var LoadRotatedSheetSequences = [];
+var LoadSheetSequences = [
+    { srcName: "WallTile.png", count: 8, name: "WallTile" },
+    { srcName: "BackgroundTile.png", count: 2, name: "BackgroundTile" }
+];
