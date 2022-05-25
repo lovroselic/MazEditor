@@ -19,6 +19,7 @@ var LoadAudio = [];
 var LoadFonts = [];
 var LoadRotatedSheetSequences = [];
 var LoadSheetSequences = [
-    { srcName: "WallTile.png", count: 8, name: "WallTile" },
-    { srcName: "BackgroundTile.png", count: 2, name: "BackgroundTile" }
+    { srcName: "BrownWall.png", count: 12, name: "WallTile", trim: false},
+    { srcName: "BlackWall.png", count: 2, name: "BackgroundTile", trim: false },
+    { srcName: "d3.png", count: 6, name: "D3", trim: false }
 ];

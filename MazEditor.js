@@ -27,7 +27,7 @@ var INI = {
   SPACE_Y: 2048
 };
 var PRG = {
-  VERSION: "0.01.04",
+  VERSION: "0.01.05",
   NAME: "MazEditor",
   YEAR: "2022",
   CSS: "color: #239AFF;",
@@ -120,7 +120,6 @@ var GAME = {
     let lw = Math.round(ENGINE.INI.GRIDPIX / 12);
     ENGINE.PACGRID.configure(lw, "pacgrid", "#FFF", "#000", "#666");
     ENGINE.PACGRID.draw(pac, corr);
-    //GAME.canvas = ENGINE.PACGRID.layer.canvas;
   },
   blockGrid() {
     let corr = $("input[name='corr']")[0].checked;
@@ -128,7 +127,6 @@ var GAME = {
     $(ENGINE.gameWindowId).width(ENGINE.gameWIDTH + 4);
     ENGINE.BLOCKGRID.configure("pacgrid", "#FFF", "#000");
     ENGINE.BLOCKGRID.draw(MAP.map, corr);
-    //GAME.canvas = ENGINE.BLOCKGRID.layer.canvas;
   },
   textureGrid() {
     let corr = $("input[name='corr']")[0].checked;
@@ -136,15 +134,14 @@ var GAME = {
     $(ENGINE.gameWindowId).width(ENGINE.gameWIDTH + 4);
     ENGINE.TEXTUREGRID.configure("pacgrid", "wall", 'RockFloor', 'BrickWall4');
     ENGINE.TEXTUREGRID.draw(MAP.map, corr);
-    //GAME.canvas = ENGINE.TEXTUREGRID.floorLayer.canvas;
   },
   tileGrid() {
     let corr = $("input[name='corr']")[0].checked;
     ENGINE.resizeBOX("ROOM");
     $(ENGINE.gameWindowId).width(ENGINE.gameWIDTH + 4);
     ENGINE.TEXTUREGRID.configure("pacgrid", "wall", 'BackgroundTile', 'WallTile');
+    ENGINE.TEXTUREGRID.set3D('D3');
     ENGINE.TEXTUREGRID.drawTiles(MAP.map, corr);
-    //GAME.canvas = ENGINE.TEXTUREGRID.floorLayer.canvas;
   },
   resize() {
     MAP.width = $("#horizontalGrid").val();

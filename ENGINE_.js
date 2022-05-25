@@ -778,19 +778,21 @@ var ENGINE = {
     const ctx = canvas.getContext("2d");
     return ctx.getImageData(offX, offY, canvas.width, canvas.height);
   },
-  extractImg(x, y, CTX) {
+  extractImg(x, y, CTX, trim = true) {
     var data, imgDATA;
     var NTX = LAYER.temp2;
     data = CTX.getImageData(x, y, ENGINE.INI.SPRITESHEET_DEFAULT_WIDTH, ENGINE.INI.SPRITESHEET_DEFAULT_HEIGHT);
     NTX.canvas.width = ENGINE.INI.SPRITESHEET_DEFAULT_WIDTH;
     NTX.canvas.height = ENGINE.INI.SPRITESHEET_DEFAULT_HEIGHT;
     NTX.putImageData(data, 0, 0);
-    imgDATA = NTX.getImageData(0, 0, ENGINE.INI.SPRITESHEET_DEFAULT_WIDTH, ENGINE.INI.SPRITESHEET_DEFAULT_HEIGHT);
-    var TRIM = ENGINE.trimCanvas(imgDATA);
-    var trimmed = NTX.getImageData(TRIM.left, TRIM.top, TRIM.right - TRIM.left, TRIM.bottom - TRIM.top);
-    NTX.canvas.width = TRIM.right - TRIM.left;
-    NTX.canvas.height = TRIM.bottom - TRIM.top;
-    NTX.putImageData(trimmed, 0, 0);
+    if (trim) {
+      imgDATA = NTX.getImageData(0, 0, ENGINE.INI.SPRITESHEET_DEFAULT_WIDTH, ENGINE.INI.SPRITESHEET_DEFAULT_HEIGHT);
+      var TRIM = ENGINE.trimCanvas(imgDATA);
+      var trimmed = NTX.getImageData(TRIM.left, TRIM.top, TRIM.right - TRIM.left, TRIM.bottom - TRIM.top);
+      NTX.canvas.width = TRIM.right - TRIM.left;
+      NTX.canvas.height = TRIM.bottom - TRIM.top;
+      NTX.putImageData(trimmed, 0, 0);
+    }
     return NTX;
   },
   drawSheet(spriteSheet) {
@@ -830,7 +832,7 @@ var ENGINE = {
     let names = [];
     for (var q = 0; q < obj.count; q++) {
       x = q * ENGINE.INI.SPRITESHEET_DEFAULT_WIDTH;
-      let NTX = ENGINE.extractImg(x, 0, CTX);
+      let NTX = ENGINE.extractImg(x, 0, CTX, obj.trim);
       newName = obj.name + "_" + q.toString().padStart(2, "0");
       ASSET[obj.name].linear.push(ENGINE.contextToSprite(newName, NTX));
       names.push(newName);
@@ -1299,7 +1301,8 @@ var ENGINE = {
           toLoad.push({
             srcName: el.srcName,
             name: el.name,
-            count: el.count
+            count: el.count,
+            trim: el.trim
           });
         });
         ENGINE.LOAD.HMSheetSequences = toLoad.length;
@@ -1415,7 +1418,7 @@ var ENGINE = {
       }
 
       function loadImage(srcData, counter, dir = ENGINE.SOURCE) {
-        var srcName, name, count, tag, parent, rotate, asset;
+        var srcName, name, count, tag, parent, rotate, asset,trim;
         switch (typeof srcData) {
           case "string":
             srcName = srcData;
@@ -1429,6 +1432,8 @@ var ENGINE = {
             parent = srcData.parent || null;
             rotate = srcData.rotate || null;
             asset = srcData.asset || null;
+            trim = srcData.trim;
+            if (trim === undefined) trim = true;
             break;
           default:
             console.error(`ENGINE: loadImage srcData ERROR: ${typeof srcData}`);
@@ -1444,7 +1449,8 @@ var ENGINE = {
             tag: tag,
             parent: parent,
             rotate: rotate,
-            asset: asset
+            asset: asset,
+            trim: trim
           };
           img.onload = function () {
             ENGINE.LOAD[counter]++;
@@ -1587,6 +1593,8 @@ var ENGINE = {
     floorTextureString: null,
     wallTexture: null,
     wallTextureString: null,
+    _3D_asset: null,
+    _3D: true,
     configure(floorLayer, wallLayer, floorTexture, wallTexture) {
       ENGINE.TEXTUREGRID.setLayers(floorLayer, wallLayer);
       ENGINE.TEXTUREGRID.setTextures(floorTexture, wallTexture);
@@ -1596,6 +1604,10 @@ var ENGINE = {
       ENGINE.TEXTUREGRID.floorLayerString = floorLayer;
       ENGINE.TEXTUREGRID.wallLayer = LAYER[wallLayer];
       ENGINE.TEXTUREGRID.wallLayerString = wallLayer;
+    },
+    set3D(asset, flag = true) {
+      ENGINE.TEXTUREGRID._3D = flag;
+      ENGINE.TEXTUREGRID._3D_asset = asset;
     },
     setTextures(floorTexture, wallTexture) {
       ENGINE.TEXTUREGRID.floorTexture = TEXTURE[floorTexture];
@@ -1637,6 +1649,31 @@ var ENGINE = {
             ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID.wallTextureString].linear.chooseRandom());
           } else {
             ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID.floorTextureString].linear.chooseRandom());
+            //3d embelish
+            if (ENGINE.TEXTUREGRID._3D) {
+              //
+              if (maze.GA.isWall(grid.add(DOWN)) && maze.GA.isWall(grid.add(LEFT))){
+                ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID._3D_asset].linear[4]);
+              }
+              else if (maze.GA.isWall(grid.add(DOWN))) {
+                if (maze.GA.isWall(grid.add(DownLeft))) {
+                  ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID._3D_asset].linear[0]);
+                } else {
+                  ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID._3D_asset].linear[1]);
+                }
+              }
+              else if (maze.GA.isWall(grid.add(DownLeft)) && maze.GA.notWall(grid.add(LEFT)) && maze.GA.notWall(grid.add(DOWN))){
+                ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID._3D_asset].linear[5]);
+              }
+              else if (maze.GA.isWall(grid.add(LEFT)))
+              {
+                if (maze.GA.isWall(grid.add(DownLeft))) {
+                  ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID._3D_asset].linear[2]);
+                } else {
+                  ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID._3D_asset].linear[3]);
+                }
+              }
+            }
           }
           if (corr) ENGINE.TEXTUREGRID.corr(ENGINE.TEXTUREGRID.wallLayer, GRID.gridToCoord(grid));
         }
