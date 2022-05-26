@@ -5,16 +5,14 @@
 "use strict";
 
 /*
-Burrows-Wheeler, text compression
+Burrows-Wheeler, RLE text compression
 */
 
 var BWT = {
-    VERSION: "0.01",
+    VERSION: "0.02",
     CSS: "color: #47A",
     bwt(text) {
-        text = "ananas_is_ananas_or_else"; //debug
         text += "$";
-        console.log("BWT text", text);
         let bwtArray = [];
         for (let i = 0; i < text.length; i++) {
             let cycle = text.substring(i) + text.substring(0, i);
@@ -52,6 +50,40 @@ var BWT = {
             string += bwt[x];
         }
         return string.substring(0, string.length - 1);
+    },
+    rle_encode(string) {
+        let encoded = "";
+        let x = 0;
+        let char = "";
+        let count = 0;
+        while (x < string.length) {
+            if (string[x] === char) {
+                count++;
+            } else {
+                if (count > 0) {
+                    encoded += char;
+                    encoded += count.toString();
+                }
+                count = 1;
+                char = string[x];
+            }
+            x++;
+        }
+        encoded += char;
+        encoded += count.toString();
+        return encoded;
+    },
+    rle_decode(rle) {
+        let decoded = "";
+        let x = 0;
+        while (x < rle.length) {
+            let char = rle[x++];
+            let number = /[0-9]+/;
+            let N = number.exec(rle.substring(x))[0];
+            x += N.length;
+            decoded += "".fill(char, parseInt(N, 10));
+        }
+        return decoded;
     }
 };
 

@@ -27,7 +27,7 @@ var INI = {
   SPACE_Y: 2048
 };
 var PRG = {
-  VERSION: "0.02.00",
+  VERSION: "0.02.01",
   NAME: "MazEditor",
   YEAR: "2022",
   CSS: "color: #239AFF;",
@@ -229,11 +229,17 @@ var GAME = {
     console.log("EXPORT");
     console.log("********************************");
     let text = MAP.map.GA.toString();
-    console.log("text:", text);
+    //text = "ananas_is_ananas_or_else_is_ananas_or_is_panamabananas"; //debug
+    console.log("text:", text, text.length);
     let bwt = BWT.bwt(text);
-    console.log("bwt", bwt);
-    let string = BWT.inverseBwt(bwt);
-    console.log("string", string);
+    console.log("bwt", bwt, bwt.length);
+    let rle = BWT.rle_encode(bwt);
+    console.log("rle", rle, rle.length);
+    console.log("rle compressed", rle.length / text.length * 100);
+    let decoded = BWT.rle_decode(rle);
+    console.log("decoded", decoded, decoded.length);
+    let string = BWT.inverseBwt(decoded);
+    console.log("string", string, string.length);
     console.log("********************************");
   }
 };
