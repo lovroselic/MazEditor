@@ -56,13 +56,17 @@ var BWT = {
         let x = 0;
         let char = "";
         let count = 0;
+        
         while (x < string.length) {
             if (string[x] === char) {
                 count++;
             } else {
                 if (count > 0) {
                     encoded += char;
-                    encoded += count.toString();
+                    if (count > 1) {
+                        encoded += char;
+                        encoded += count.toString();
+                    }
                 }
                 count = 1;
                 char = string[x];
@@ -70,7 +74,10 @@ var BWT = {
             x++;
         }
         encoded += char;
-        encoded += count.toString();
+        if (count > 1) {
+            encoded += char;
+            encoded += count.toString();
+        }
         return encoded;
     },
     rle_decode(rle) {
@@ -78,10 +85,15 @@ var BWT = {
         let x = 0;
         while (x < rle.length) {
             let char = rle[x++];
-            let number = /[0-9]+/;
-            let N = number.exec(rle.substring(x))[0];
-            x += N.length;
-            decoded += "".fill(char, parseInt(N, 10));
+            if (rle[x] === char) {
+                x++;
+                let number = /[0-9]+/;
+                let N = number.exec(rle.substring(x))[0];
+                x += N.length;
+                decoded += "".fill(char, parseInt(N, 10));
+            } else {
+                decoded += char;
+            }
         }
         return decoded;
     }
