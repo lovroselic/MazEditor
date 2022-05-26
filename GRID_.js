@@ -16,7 +16,7 @@ known bugs:
 */
 
 var GRID = {
-  VERSION: "3.04",
+  VERSION: "3.05",
   CSS: "color: #0AA",
   SETTING: {
     ALLOW_CROSS: false,
@@ -1156,6 +1156,15 @@ class GridArray {
       if (this.isWall(startGrid)) return false;
     } while (!startGrid.same(lookGrid));
     return true;
+  }
+  toString(){
+    const offset = 65;
+    console.log("stringifying grid ....", this);
+    let str = "";
+    for (let byte of this.map){
+      str += String.fromCharCode(byte + 65);
+    }
+    return str;
   }
 }
 class IndexArray {

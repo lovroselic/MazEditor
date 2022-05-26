@@ -27,7 +27,7 @@ var INI = {
   SPACE_Y: 2048
 };
 var PRG = {
-  VERSION: "0.01.05",
+  VERSION: "0.02.00",
   NAME: "MazEditor",
   YEAR: "2022",
   CSS: "color: #239AFF;",
@@ -56,6 +56,7 @@ var PRG = {
     $("#grid").click(GAME.render);
 
     $("#buttons").on("click", "#new", GAME.init);
+    $("#buttons").on("click", "#export", GAME.export);
 
     $("#engine_version").html(ENGINE.VERSION);
     $("#grid_version").html(GRID.VERSION);
@@ -74,8 +75,6 @@ var PRG = {
   }
 };
 var GAME = {
-  counter: 0,
-  canvas: null,
   start() {
     $("#bottom")[0].scrollIntoView();
     ENGINE.topCanvas = ENGINE.getCanvasName("ROOM");
@@ -224,6 +223,18 @@ var GAME = {
     ENGINE.addBOX("ROOM", ENGINE.gameWIDTH, ENGINE.gameHEIGHT, ["pacgrid", "wall", "grid", "click"], null);
 
     $("#buttons").append("<input type='button' id='new' value='New'>");
+    $("#buttons").append("<input type='button' id='export' value='Export'>");
+  },
+  export(){
+    console.log("EXPORT");
+    console.log("********************************");
+    let text = MAP.map.GA.toString();
+    console.log("text:", text);
+    let bwt = BWT.bwt(text);
+    console.log("bwt", bwt);
+    let string = BWT.inverseBwt(bwt);
+    console.log("string", string);
+    console.log("********************************");
   }
 };
 $(function () {
