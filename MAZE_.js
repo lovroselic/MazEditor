@@ -1612,9 +1612,10 @@ class RatArena extends MasterDungeon {
     }
 }
 class FreeMap extends MasterDungeon{
-    constructor(sizeX, sizeY){
+    constructor(sizeX, sizeY, GA = null){
         super(sizeX, sizeY);
         this.type = "FREE-MAP";
+        if (GA !== null) this.GA = GA;
     } 
 }
 var MAZE = {
@@ -1686,8 +1687,8 @@ var ARENA = {
     }
 };
 var FREE_MAP = {
-    create(sizeX, sizeY){
-        var map = new FreeMap(sizeX, sizeY);
+    create(sizeX, sizeY, GA = null){
+        var map = new FreeMap(sizeX, sizeY, GA);
         return map;
     }
 };

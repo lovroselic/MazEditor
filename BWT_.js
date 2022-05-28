@@ -9,7 +9,7 @@ Burrows-Wheeler, RLE text compression
 */
 
 var BWT = {
-    VERSION: "0.02",
+    VERSION: "0.03",
     CSS: "color: #47A",
     bwt(text) {
         text += "$";
@@ -56,7 +56,7 @@ var BWT = {
         let x = 0;
         let char = "";
         let count = 0;
-        
+
         while (x < string.length) {
             if (string[x] === char) {
                 count++;

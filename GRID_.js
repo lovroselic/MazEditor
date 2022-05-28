@@ -1157,14 +1157,27 @@ class GridArray {
     } while (!startGrid.same(lookGrid));
     return true;
   }
-  toString(){
+  toString() {
     const offset = 65;
-    console.log("stringifying grid ....", this);
     let str = "";
-    for (let byte of this.map){
-      str += String.fromCharCode(byte + 65);
+    for (let byte of this.map) {
+      str += String.fromCharCode(byte + offset);
     }
     return str;
+  }
+  exportMap() {
+    return BWT.rle_encode(BWT.bwt(this.toString()));
+  }
+  static importMap(rle) {
+    return BWT.inverseBwt(BWT.rle_decode(rle));
+  }
+  static fromString(sizeX, sizeY, string, byte = 1) {
+    const offset = 65;
+    let GA = new GridArray(sizeX, sizeY, byte);
+    for (let i = 0; i < string.length; i++){
+      GA.map[i] = string[i].charCodeAt(0) - offset;
+    }
+    return GA;
   }
 }
 class IndexArray {

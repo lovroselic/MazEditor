@@ -27,7 +27,7 @@ var INI = {
   SPACE_Y: 2048
 };
 var PRG = {
-  VERSION: "0.02.02",
+  VERSION: "0.02.03",
   NAME: "MazEditor",
   YEAR: "2022",
   CSS: "color: #239AFF;",
@@ -57,6 +57,7 @@ var PRG = {
 
     $("#buttons").on("click", "#new", GAME.init);
     $("#buttons").on("click", "#export", GAME.export);
+    $("#buttons").on("click", "#import", GAME.import);
 
     $("#engine_version").html(ENGINE.VERSION);
     $("#grid_version").html(GRID.VERSION);
@@ -161,9 +162,9 @@ var GAME = {
         GAME.textureGrid();
         break;
 
-        case "tile":
-          GAME.tileGrid();
-          break;
+      case "tile":
+        GAME.tileGrid();
+        break;
     }
 
     if ($("input[name='grid']")[0].checked) GRID.grid();
@@ -224,24 +225,25 @@ var GAME = {
 
     $("#buttons").append("<input type='button' id='new' value='New'>");
     $("#buttons").append("<input type='button' id='export' value='Export'>");
+    $("#buttons").append("<input type='button' id='import' value='Import'>");
   },
-  export(){
-    console.log("EXPORT");
-    console.log("****************************************************************");
-    let text = MAP.map.GA.toString();
-    //text = "ananas_is_ananas_or_else_is_ananas_or_it_is_panamabananas"; //debug
-    console.log("text:", text, text.length);
-    let bwt = BWT.bwt(text);
-    console.log("bwt", bwt, bwt.length);
-    let rle = BWT.rle_encode(bwt);
-    console.log("rle", rle, rle.length);
-    console.log("rle compressed", rle.length / text.length * 100);
-    let decoded = BWT.rle_decode(rle);
-    console.log("decoded", decoded, decoded.length);
-    let string = BWT.inverseBwt(decoded);
-    console.log("string", string, string.length);
-    console.log("****************************************************************");
-  }
+  export() {
+    let rle = MAP.map.GA.exportMap();
+    let Export = { width: MAP.width, height: MAP.height, map: rle };
+    $("#exp").html(JSON.stringify(Export));
+  },
+  import() {
+    let Import = JSON.parse($("#exp").val());
+    Import.map = GridArray.importMap(Import.map);
+    $("#horizontalGrid").val(Import.width);
+    $("#verticalGrid").val(Import.height);
+    MAP.width = Import.width;
+    MAP.height = Import.height;
+    Import.map = GridArray.fromString(Import.width,Import.height, Import.map);
+    MAP.map = FREE_MAP.create(MAP.width, MAP.height, Import.map);
+    console.log(MAP.map);
+    GAME.render();
+  },
 };
 $(function () {
   PRG.INIT();
