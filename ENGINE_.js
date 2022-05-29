@@ -1418,7 +1418,7 @@ var ENGINE = {
       }
 
       function loadImage(srcData, counter, dir = ENGINE.SOURCE) {
-        var srcName, name, count, tag, parent, rotate, asset,trim;
+        var srcName, name, count, tag, parent, rotate, asset, trim;
         switch (typeof srcData) {
           case "string":
             srcName = srcData;
@@ -1595,6 +1595,8 @@ var ENGINE = {
     wallTextureString: null,
     _3D_asset: null,
     _3D: true,
+    _dynamic: true,
+    dynamicAssets: { door: null, trapdoor: null },
     configure(floorLayer, wallLayer, floorTexture, wallTexture) {
       ENGINE.TEXTUREGRID.setLayers(floorLayer, wallLayer);
       ENGINE.TEXTUREGRID.setTextures(floorTexture, wallTexture);
@@ -1652,7 +1654,7 @@ var ENGINE = {
             //3d embelish
             if (ENGINE.TEXTUREGRID._3D) {
               //
-              if (maze.GA.isWall(grid.add(DOWN)) && maze.GA.isWall(grid.add(LEFT))){
+              if (maze.GA.isWall(grid.add(DOWN)) && maze.GA.isWall(grid.add(LEFT))) {
                 ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID._3D_asset].linear[4]);
               }
               else if (maze.GA.isWall(grid.add(DOWN))) {
@@ -1662,11 +1664,10 @@ var ENGINE = {
                   ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID._3D_asset].linear[1]);
                 }
               }
-              else if (maze.GA.isWall(grid.add(DownLeft)) && maze.GA.notWall(grid.add(LEFT)) && maze.GA.notWall(grid.add(DOWN))){
+              else if (maze.GA.isWall(grid.add(DownLeft)) && maze.GA.notWall(grid.add(LEFT)) && maze.GA.notWall(grid.add(DOWN))) {
                 ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID._3D_asset].linear[5]);
               }
-              else if (maze.GA.isWall(grid.add(LEFT)))
-              {
+              else if (maze.GA.isWall(grid.add(LEFT))) {
                 if (maze.GA.isWall(grid.add(DownLeft))) {
                   ENGINE.drawToGrid(ENGINE.TEXTUREGRID.floorLayerString, grid, ASSET[ENGINE.TEXTUREGRID._3D_asset].linear[2]);
                 } else {
@@ -1674,8 +1675,17 @@ var ENGINE = {
                 }
               }
             }
+            //dynamic
+            if (ENGINE.TEXTUREGRID._dynamic) {
+              if (maze.GA.isDoor(grid)) {
+                ENGINE.drawToGrid(ENGINE.TEXTUREGRID.wallLayerString, grid, ASSET[ENGINE.TEXTUREGRID.dynamicAssets.door].linear.chooseRandom());
+              }
+              if (maze.GA.isTrapDoor(grid)) {
+                ENGINE.drawToGrid(ENGINE.TEXTUREGRID.wallLayerString, grid, ASSET[ENGINE.TEXTUREGRID.dynamicAssets.trapdoor].linear.chooseRandom());
+              }
+            }
           }
-          if (corr) ENGINE.TEXTUREGRID.corr(ENGINE.TEXTUREGRID.wallLayer, GRID.gridToCoord(grid));
+          if (corr && maze.GA.notWall(grid)) ENGINE.TEXTUREGRID.corr(ENGINE.TEXTUREGRID.wallLayer, GRID.gridToCoord(grid));
         }
       }
       if (ENGINE.verbose) {

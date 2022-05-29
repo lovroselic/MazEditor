@@ -504,7 +504,9 @@ var MAPDICT = {
   START_POSITION: 2 ** 4, //16
   STAIR: 2 ** 5, //32
   SHRINE: 2 ** 6, // 64
-  FOG: 2 ** 7 //128 - fog should remain largest!
+  FOG: 2 ** 7, //128 - fog should remain largest!
+  //alernative1
+  TRAP_DOOR: 2 ** 3, //8
 };
 class GridArray {
   constructor(sizeX, sizeY, byte = 1, fill = 0) {
@@ -664,6 +666,12 @@ class GridArray {
   }
   notReserved(grid) {
     return !this.isReserved(grid);
+  }
+  addTrapDoor(grid) {
+    this.set(grid, MAPDICT.TRAP_DOOR);
+  }
+  isTrapDoor(grid) {
+    return this.check(grid, MAPDICT.TRAP_DOOR) === MAPDICT.TRAP_DOOR;
   }
   toEmpty(grid) {
     this.setValue(grid, MAPDICT.EMPTY);
